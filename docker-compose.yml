@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - 9906:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: wordsec
+      MYSQL_DATABASE: MyWordPressTest
+      MYSQL_USER: MyWordPressTest
+      MYSQL_PASSWORD: wordsec
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - my_network
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress
+    ports:
+      - 8080:80
+    volumes:
+      - ./wp-connect:/var/www/html/wp-connect
+      - db_data:/var/lib/mysql
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: MyWordPressTest
+      WORDPRESS_DB_PASSWORD: wordsec
+      WORDPRESS_DB_NAME: MyWordPressTest
+    networks:
+      - my_network
+
+volumes:
+  db_data:
+
+networks:
+  my_network:
+   driver: bridge
