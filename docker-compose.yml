@@ -2,14 +2,18 @@ version: '3'
 
 services:
   db:
-    image: mysql:latest
-    ports:
-      - 9906:3306
+    container_name: db
+    image: mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: wordsec
       MYSQL_DATABASE: MyWordPressTest
       MYSQL_USER: MyWordPressTest
       MYSQL_PASSWORD: wordsec
+    expose:
+      - 3306
+      - 33060
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -19,7 +23,7 @@ services:
       - db
     image: wordpress
     ports:
-      - 8080:80
+      - 80:80
     volumes:
       - ./wp-connect:/var/www/html/wp-connect
       - db_data:/var/lib/mysql
