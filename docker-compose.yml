@@ -18,6 +18,7 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - my_network
+
   wordpress:
     depends_on:
       - db
@@ -25,13 +26,33 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./wp-connect:/var/www/html/wp-connect
       - db_data:/var/lib/mysql
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: MyWordPressTest
       WORDPRESS_DB_PASSWORD: wordsec
       WORDPRESS_DB_NAME: MyWordPressTest
+    networks:
+      - my_network
+
+  cli:
+    image: wordpress:cli
+    restart: "on-failure:30"
+    hostname: wp_cli 
+    volumes:
+      - db_data:/var/lib/mysql
+    volumes_from:
+      - wordpress
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: MyWordPressTest
+      WORDPRESS_DB_PASSWORD: wordsec
+      WORDPRESS_DB_NAME: MyWordPressTest
+    depends_on:
+      - db
+      - wordpress
+    command: |
+      wp --allow-root core install --url=localhost --title="MyITSite" --admin_user=dmonakh --admin_password=monakh3108 --admin_email=den3108mon@gmail.com 
     networks:
       - my_network
 
