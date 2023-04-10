@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  db:
+    container_name: db
+    image: mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordsec
+      MYSQL_DATABASE: MyWordPressTest
+      MYSQL_USER: MyWordPressTest
+      MYSQL_PASSWORD: wordsec
+    expose:
+      - 3306
+      - 33060
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - my_network
+
+  wordpress:
+    depends_on:
+      - db
+    image: custom_wp
+    ports:
+      - 80:80
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - my_network
+
+  cli:
+    image: wordpress:cli
+    restart: "on-failure:30"
+    hostname: wp_cli 
+    volumes:
+      - db_data:/var/lib/mysql
+    volumes_from:
+      - wordpress
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: MyWordPressTest
+      WORDPRESS_DB_PASSWORD: wordsec
+      WORDPRESS_DB_NAME: MyWordPressTest
+    depends_on:
+      - db
+      - wordpress
+    command: |
+      wp --allow-root core install --url=localhost --title="MyITSite" --admin_user=dmonakh --admin_password=monakh3108 --admin_email=den3108mon@gmail.com 
+    networks:
+      - my_network
+
+volumes:
+  db_data:
+
+networks:
+  my_network:
+   driver: bridge
+
+
