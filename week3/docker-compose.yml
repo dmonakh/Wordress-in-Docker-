@@ -19,6 +19,22 @@ services:
     networks:
       - my_network
 
+  init-db:
+    image: mysql
+    command: /init_db.sh
+    environment:
+      MYSQL_ROOT_PASSWORD: wordsec
+      MYSQL_DATABASE: MyWordPressTest
+      MYSQL_USER: MyWordPressTest
+      MYSQL_PASSWORD: wordsec
+    volumes:
+      - ./init_db.sh:/init_db.sh
+    depends_on:
+      db:
+        condition: service_started
+    networks:
+      - my_network
+
   wordpress:
     depends_on:
       - db
@@ -30,32 +46,29 @@ services:
     networks:
       - my_network
 
-  cli:
+  init-cli:
     image: wordpress:cli
     restart: "on-failure:30"
-    hostname: wp_cli 
-    volumes:
-      - db_data:/var/lib/mysql
-    volumes_from:
-      - wordpress
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: MyWordPressTest
       WORDPRESS_DB_PASSWORD: wordsec
       WORDPRESS_DB_NAME: MyWordPressTest
-    depends_on:
-      - db
+    volumes:
+      - ./init_cli.sh:/init_cli.sh
+    volumes_from:
       - wordpress
-    command: |
-      wp --allow-root core install --url=localhost --title="MyITSite" --admin_user=dmonakh --admin_password=monakh3108 --admin_email=den3108mon@gmail.com 
+    depends_on:
+      db:
+        condition: service_started
+      wordpress:
+        condition: service_started
+    command: /init_cli.sh  
     networks:
       - my_network
 
 volumes:
   db_data:
-
 networks:
   my_network:
    driver: bridge
-
-
