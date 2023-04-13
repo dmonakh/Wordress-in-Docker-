@@ -1,4 +1,5 @@
 FROM wordpress
+USER www-data
 
 ENV WORDPRESS_DB_HOST=db:3306
 ENV WORDPRESS_DB_USER=MyWordPressTest

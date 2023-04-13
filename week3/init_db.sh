@@ -5,6 +5,6 @@ for i in {1..50}; do mysql -u root -p${MYSQL_ROOT_PASSWORD} -h db -e "show datab
 if [ ! $s -eq 0 ]; then exit $s; fi
 
 # Init some stuff in db before leaving the floor to the application
-mysql -u root -p${MYSQL_ROOT_PASSWORD} -h db -e "create database my_app"
-mysql -u root -p${MYSQL_ROOT_PASSWORD} -h db -e "create table my_app.test (id int unsigned not null auto_increment primary key, myval varchar(255) not null)"
-mysql -u root -p${MYSQL_ROOT_PASSWORD} -h db -e "insert into my_app.test (myval) values ('toto'), ('pipo'), ('bingo')"
+mysql -u root -p${MYSQL_ROOT_PASSWORD} -h db -e "create database wp_bd"
+mysql -u root -p${MYSQL_ROOT_PASSWORD} -h db -e "create table my_app.table_wp (id int unsigned not null auto_increment primary key, myval varchar(255) not null)"
+mysql -u root -p${MYSQL_ROOT_PASSWORD} -h db -e "insert into my_app.table_wp (myval) values ('it'), ('bd'), ('wp')"
